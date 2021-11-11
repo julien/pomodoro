@@ -38,7 +38,7 @@ fn main() {
             }
             "-h" => {
                 usage();
-                process::exit(1)
+                process::exit(0)
             }
             "-m" | "-t" => {
                 if let Some(t) = args.next() {
