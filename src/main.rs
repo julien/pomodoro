@@ -4,7 +4,6 @@ use std::{
     time::{Duration, Instant},
 };
 
-#[derive(Debug)]
 struct Config {
     minutes: u32,
     message: String,
