@@ -1,4 +1,5 @@
 use std::{
+    collections::HashMap,
     env::args,
     process, thread,
     time::{Duration, Instant},
@@ -20,37 +21,50 @@ impl Default for Config {
     }
 }
 
+fn duration_command(config: &mut Config, args: Option<&mut String>) {
+    if let Some(t) = args {
+        if let Ok(t) = t.parse::<u32>() {
+            config.minutes = t
+        }
+    }
+}
+
+fn title_command(config: &mut Config, args: Option<&mut String>) {
+    if let Some(t) = args {
+        if let Ok(t) = t.parse() {
+            config.title = t;
+        }
+    }
+}
+
+fn message_command(config: &mut Config, args: Option<&mut String>) {
+    if let Some(t) = args {
+        if let Ok(t) = t.parse() {
+            config.message = t;
+        }
+    }
+}
+
+fn help_command(_config: &mut Config, _args: Option<&mut String>) {
+    usage();
+    process::exit(0);
+}
+
 fn main() {
     let mut config = Config::default();
 
     let mut args: Vec<String> = args().skip(1).collect();
     let mut args = args.iter_mut();
+    let mut commands: HashMap<String, fn(config: &mut Config, args: Option<&mut String>)> =
+        HashMap::new();
+    commands.insert("-d".to_string(), duration_command);
+    commands.insert("-h".to_string(), help_command);
+    commands.insert("-t".to_string(), title_command);
+    commands.insert("-m".to_string(), message_command);
 
     while let Some(arg) = args.next() {
-        match arg.to_lowercase().as_ref() {
-            "-d" => {
-                if let Some(t) = args.next() {
-                    if let Ok(t) = t.parse::<u32>() {
-                        config.minutes = t
-                    }
-                }
-            }
-            "-h" => {
-                usage();
-                process::exit(0)
-            }
-            "-m" | "-t" => {
-                if let Some(t) = args.next() {
-                    if let Ok(t) = t.parse() {
-                        match arg.to_lowercase().as_ref() {
-                            "-m" => config.message = t,
-                            "-t" => config.title = t,
-                            _ => {}
-                        }
-                    }
-                }
-            }
-            _ => {}
+        if let Some(command) = commands.get(arg.to_lowercase().as_str()) {
+            command(&mut config, args.next())
         }
     }
 
