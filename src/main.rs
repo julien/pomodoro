@@ -46,7 +46,14 @@ fn message_command(config: &mut Config, args: Option<&mut String>) {
 }
 
 fn help_command(_config: &mut Config, _args: Option<&mut String>) {
-    usage();
+    println!("Usage: pomodoro [OPTION]... [ARGUMENT]...");
+    println!("Basic pomodoro timer");
+    println!("Options:");
+    println!("  -d     duration in minutes (the default is 25)");
+    println!("  -t     title (the default value is \"Time left\")");
+    println!("  -m     a message that is displayed when the timer ends");
+    println!("  -h     print this message");
+
     process::exit(0);
 }
 
@@ -99,14 +106,4 @@ fn main() {
 
     handle.join().unwrap();
     println!("{}", config.message);
-}
-
-fn usage() {
-    println!("Usage: pomodoro [OPTION]... [ARGUMENT]...");
-    println!("Basic pomodoro timer");
-    println!("Options:");
-    println!("  -d     duration in minutes (the default is 25)");
-    println!("  -t     title (the default value is \"Time left\")");
-    println!("  -m     a message that is displayed when the timer ends");
-    println!("  -h     print this message");
 }
